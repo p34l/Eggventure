@@ -19,9 +19,7 @@ struct HowToPlayView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Верхня частина з кнопкою назад (як в MenuView)
                 HStack {
-                    // Кнопка назад зліва
                     Button(action: {
                         if !navigationPath.isEmpty {
                             navigationPath.removeLast()
@@ -37,7 +35,6 @@ struct HowToPlayView: View {
 
                     Spacer()
 
-                    // Порожнє місце під другу кнопку (як settings у меню)
                     Color.clear
                         .frame(width: 60, height: 60)
                         .padding(.top, 20)
@@ -46,9 +43,7 @@ struct HowToPlayView: View {
 
                 Spacer()
 
-                // Фіолетовий прямокутник з контентом
                 VStack(spacing: 0) {
-                    // Заголовок "HOW TO PLAY"
                     Text("HOW TO PLAY")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -56,37 +51,36 @@ struct HowToPlayView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 20)
 
-                    // Контент з інструкціями
                     ScrollView {
                         VStack(spacing: 20) {
                             InstructionCard(
                                 icon: "gamecontroller.fill",
                                 title: "Game Controls",
-                                description: "Tap the left side of the screen to move left, tap the right side to move right. Your character will automatically jump when landing on platforms."
+                                description: "Use the left and right arrow buttons to move your basket. Hold the buttons for continuous movement. Catch falling eggs before they hit the ground!"
                             )
 
                             InstructionCard(
                                 icon: "target",
                                 title: "Objective",
-                                description: "Collect coins and reach as high as possible! Avoid falling off the screen. Each coin gives you points and helps you progress."
+                                description: "Catch 10 eggs to win! Use your basket to collect falling eggs. Be careful - if an egg falls off the screen, you lose a life!"
                             )
 
                             InstructionCard(
                                 icon: "star.fill",
-                                title: "Scoring",
-                                description: "• Collect coins for points\n• Reach higher platforms for bonus points\n• Complete levels to unlock new ones\n• Earn stars based on your performance"
+                                title: "Scoring & Lives",
+                                description: "• Catch eggs to earn 10 points each\n• You start with 3 lives (hearts)\n• Lose a life when an egg falls off screen\n• Win by catching 10 eggs total"
                             )
 
                             InstructionCard(
-                                icon: "shop",
-                                title: "Shop & Customization",
-                                description: "Use your earned coins to buy new balls and customize your character. Different balls may have special abilities!"
+                                icon: "basket.fill",
+                                title: "Egg Catcher",
+                                description: "Eggs fall from random positions at the top. Move your basket to catch them. The basket has a larger pickup zone than it appears!"
                             )
 
                             InstructionCard(
                                 icon: "trophy.fill",
-                                title: "Leaderboard",
-                                description: "Compete with other players and see how you rank on the global leaderboard. Try to beat the high scores!"
+                                title: "Victory",
+                                description: "Successfully catch all 10 eggs to win the game! Your score and coins will be saved. Try to beat your best time!"
                             )
                         }
                         .padding(.horizontal, 20)

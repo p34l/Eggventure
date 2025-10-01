@@ -43,8 +43,8 @@ struct ShopView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 60, height: 60)
                     }
-                    .padding(.top, 20)
-                    .padding(.leading, 40)
+                    .padding(.top, 45)
+                    .padding(.leading, 60)
 
                     Spacer()
 
@@ -68,8 +68,8 @@ struct ShopView: View {
                             .frame(width: 30, height: 30)
                             .offset(x: 30)
                     }
-                    .padding(.top, 20)
-                    .padding(.trailing, 40)
+                    .padding(.top, 45)
+                    .padding(.trailing, 80)
                 }
 
                 Spacer()

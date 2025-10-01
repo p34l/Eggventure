@@ -30,7 +30,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		ABF3BFBD2E8D228C004A080A /* Exceptions for "Eggventure" folder in "Eggventure" target */ = {
+		AB4A4DF52E8D7D9C0062D69B /* Exceptions for "Eggventure" folder in "Eggventure" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -43,7 +43,7 @@
 		AB059EE22E76F17A00CE05EC /* Eggventure */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				ABF3BFBD2E8D228C004A080A /* Exceptions for "Eggventure" folder in "Eggventure" target */,
+				AB4A4DF52E8D7D9C0062D69B /* Exceptions for "Eggventure" folder in "Eggventure" target */,
 			);
 			path = Eggventure;
 			sourceTree = "<group>";
@@ -395,7 +395,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 527628X4YU;
-				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Eggventure/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to take a profile picture.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app needs access to your photo library to set a profile picture.\n";
@@ -426,7 +425,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 527628X4YU;
-				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Eggventure/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to take a profile picture.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app needs access to your photo library to set a profile picture.\n";
@@ -456,7 +454,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 527628X4YU;
-				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mykhailokandaurov.Hopper--Rise-UpTests";
@@ -475,7 +472,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 527628X4YU;
-				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mykhailokandaurov.Hopper--Rise-UpTests";
@@ -493,7 +489,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 527628X4YU;
-				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mykhailokandaurov.Hopper--Rise-UpUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -510,7 +505,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 527628X4YU;
-				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mykhailokandaurov.Hopper--Rise-UpUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";

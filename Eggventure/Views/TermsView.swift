@@ -32,7 +32,6 @@ struct TermsView: View {
 
                     Spacer()
 
-                    // Порожнє місце під другу кнопку (як settings у меню)
                     Color.clear
                         .frame(width: 60, height: 60)
                         .padding(.top, 20)
@@ -42,7 +41,6 @@ struct TermsView: View {
                 Spacer()
 
                 VStack(spacing: 0) {
-                    // Назва на верхньому краю всередині прямокутника
                     Text("TERMS OF SERVICE")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -50,7 +48,8 @@ struct TermsView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 20)
 
-                    // TODO: Додати контент умов використання
+                    Spacer()
+
                     Text("Terms of Service content will be added here...")
                         .font(.system(size: 16))
                         .foregroundColor(.white)

@@ -23,6 +23,7 @@ struct GameSettingsView: View {
     @State private var stopOnProfit: String = "0.00"
     @State private var stopOnLoss: String = "0.00"
     @State private var showingBetAmountInput = false
+    @State private var showingGame = false
 
     enum GameMode: String, CaseIterable {
         case lightning = "LIGHTNING"
@@ -46,6 +47,10 @@ struct GameSettingsView: View {
                 maxAmount: userSettings.totalCoins,
                 isPresented: $showingBetAmountInput
             )
+        }
+        .fullScreenCover(isPresented: $showingGame) {
+            GameView()
+                .environmentObject(userSettings)
         }
     }
     
@@ -316,9 +321,7 @@ struct GameSettingsView: View {
     
     private var startButton: some View {
         Button(action: {
-            if !navigationPath.isEmpty {
-                navigationPath.removeLast()
-            }
+            showingGame = true
         }) {
             ZStack {
                 Image("start_button")

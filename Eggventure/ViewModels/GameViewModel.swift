@@ -8,6 +8,12 @@
 import Foundation
 import SwiftUI
 
+extension CGPoint {
+    func distance(to point: CGPoint) -> CGFloat {
+        sqrt(pow(x - point.x, 2) + pow(y - point.y, 2))
+    }
+}
+
 enum GameState {
     case playing
     case paused
@@ -15,50 +21,79 @@ enum GameState {
     case victory
 }
 
-struct Platform: Identifiable {
+struct FallingEgg: Identifiable {
     let id = UUID()
     var position: CGPoint
-    let size: CGSize
-    var isActive: Bool = true
-}
-
-struct Coin: Identifiable {
-    let id = UUID()
-    var position: CGPoint
-    let size: CGSize = CGSize(width: 30, height: 30)
-    var isCollected: Bool = false
-    let value: Int = 10
+    let ballType: String
+    var isCaught: Bool = false
 }
 
 class GameViewModel: ObservableObject {
     @Published var gameState: GameState = .playing
     @Published var score: Int = 0
-    @Published var platforms: [Platform] = []
-    @Published var coins: [Coin] = []
-    @Published var playerPosition: CGPoint = CGPoint(x: 200, y: 600)
+    @Published var lives: Int = 3
+    @Published var eggsCaught: Int = 0
+    @Published var targetEggs: Int = 10
+    @Published var fallingEggs: [FallingEgg] = []
+    @Published var basketPosition: CGFloat = 0
     @Published var isPaused: Bool = false
+    @Published var isMovingLeft = false
+    @Published var isMovingRight = false
     
-    private var playerVelocity: CGPoint = CGPoint(x: 0, y: 0)
-    private var lastUpdateTime: Date = Date()
-    private let gravity: CGFloat = 800
-    private let jumpForce: CGFloat = 400
-    private let moveSpeed: CGFloat = 200
     private let screenWidth: CGFloat = UIScreen.main.bounds.width
     private let screenHeight: CGFloat = UIScreen.main.bounds.height
+    private let basketWidth: CGFloat = 80
+    private let basketHeight: CGFloat = 40
+    private let eggSize: CGFloat = 40
+    private let fallSpeed: CGFloat = 200
+    private let moveSpeed: CGFloat = 600
+    
+    private var gameTimer: Timer?
+    private var eggSpawnTimer: Timer?
+    private var movementTimer: Timer?
+    private var userSettings: UserSettings?
     
     init() {
-        generateInitialLevel()
+        basketPosition = UIScreen.main.bounds.width / 2
+    }
+    
+    func setUserSettings(_ userSettings: UserSettings) {
+        self.userSettings = userSettings
     }
     
     func startGame() {
         gameState = .playing
         score = 0
-        playerPosition = CGPoint(x: screenWidth / 2, y: screenHeight - 150)
-        playerVelocity = CGPoint.zero
-        platforms.removeAll()
-        coins.removeAll()
-        generateInitialLevel()
-        startGameLoop()
+        lives = 3
+        eggsCaught = 0
+        basketPosition = screenWidth / 2
+        fallingEggs.removeAll()
+        
+        spawnEgg()
+        
+        gameTimer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { _ in
+            if self.gameState == .playing && !self.isPaused {
+                self.updateGame()
+            }
+        }
+        
+        eggSpawnTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { _ in
+            if self.gameState == .playing && !self.isPaused {
+                self.spawnEgg()
+            }
+        }
+    }
+
+    
+    func stopGame() {
+        gameTimer?.invalidate()
+        eggSpawnTimer?.invalidate()
+        movementTimer?.invalidate()
+        gameTimer = nil
+        eggSpawnTimer = nil
+        movementTimer = nil
+        isMovingLeft = false
+        isMovingRight = false
     }
     
     func togglePause() {
@@ -67,157 +102,129 @@ class GameViewModel: ObservableObject {
     }
     
     func restartGame() {
+        stopGame()
         startGame()
     }
     
-    func jump() {
+    func moveBasketLeft() {
         if gameState == .playing && !isPaused {
-            playerVelocity.y = jumpForce
+            let newPos = max(basketPosition - 30, basketWidth / 2)
+            withAnimation(.linear(duration: 0.1)) {
+                basketPosition = newPos
+            }
         }
     }
     
-    func movePlayerLeft() {
+    func moveBasketRight() {
         if gameState == .playing && !isPaused {
-            playerVelocity.x = -moveSpeed
+            let newPos = min(basketPosition + 30, screenWidth - basketWidth / 2)
+            withAnimation(.linear(duration: 0.1)) {
+                basketPosition = newPos
+            }
         }
     }
     
-    func movePlayerRight() {
-        if gameState == .playing && !isPaused {
-            playerVelocity.x = moveSpeed
-        }
+    func startMovingLeft() {
+        isMovingLeft = true
+        startMovementTimer()
     }
     
-    private func startGameLoop() {
-        Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { timer in
-            if self.gameState == .playing && !self.isPaused {
-                self.updateGame()
+    func stopMovingLeft() {
+        isMovingLeft = false
+    }
+    
+    func startMovingRight() {
+        isMovingRight = true
+        startMovementTimer()
+    }
+    
+    func stopMovingRight() {
+        isMovingRight = false
+    }
+    
+    private func startMovementTimer() {
+        guard movementTimer == nil else { return }
+        
+        movementTimer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { _ in
+            guard self.gameState == .playing && !self.isPaused else { return }
+            
+            if self.isMovingLeft {
+                let newPos = max(self.basketPosition - 5, self.basketWidth / 2)
+                withAnimation(.linear(duration: 0.016)) {
+                    self.basketPosition = newPos
+                }
+            }
+            if self.isMovingRight {
+                let newPos = min(self.basketPosition + 5, self.screenWidth - self.basketWidth / 2)
+                withAnimation(.linear(duration: 0.016)) {
+                    self.basketPosition = newPos
+                }
             }
             
-            if self.gameState == .gameOver || self.gameState == .victory {
-                timer.invalidate()
+            if !self.isMovingLeft && !self.isMovingRight {
+                self.movementTimer?.invalidate()
+                self.movementTimer = nil
             }
         }
     }
     
     private func updateGame() {
-        let currentTime = Date()
-        let deltaTime = currentTime.timeIntervalSince(lastUpdateTime)
-        lastUpdateTime = currentTime
+        let basketY = screenHeight - basketHeight/2
+        let pickupZoneWidth = basketWidth + 40
+        let pickupZoneHeight = basketHeight + 20
+        let basketRect = CGRect(
+            x: basketPosition - pickupZoneWidth/2,
+            y: basketY - pickupZoneHeight/2,
+            width: pickupZoneWidth,
+            height: pickupZoneHeight
+        )
         
-        playerVelocity.y -= gravity * deltaTime
-        
-        playerPosition.x += playerVelocity.x * deltaTime
-        playerPosition.y += playerVelocity.y * deltaTime
-        
-        let playerRadius: CGFloat = 20
-        if playerPosition.x < playerRadius {
-            playerPosition.x = playerRadius
-            playerVelocity.x = 0
-        } else if playerPosition.x > screenWidth - playerRadius {
-            playerPosition.x = screenWidth - playerRadius
-            playerVelocity.x = 0
-        }
-        
-        checkPlatformCollisions()
-        
-        checkCoinCollection()
-        
-        generateNewElements()
-        
-        checkGameConditions()
-        
-        playerVelocity.x *= 0.9
-    }
-    
-    private func checkPlatformCollisions() {
-        for platform in platforms {
-            let playerBottom = playerPosition.y - 20
-            let playerTop = playerPosition.y + 20
-            let playerLeft = playerPosition.x - 20
-            let playerRight = playerPosition.x + 20
+        for index in fallingEggs.indices.reversed() {
+            let eggRect = CGRect(
+                x: fallingEggs[index].position.x - eggSize/2,
+                y: fallingEggs[index].position.y - eggSize/2,
+                width: eggSize,
+                height: eggSize
+            )
             
-            let platformTop = platform.position.y + platform.size.height / 2
-            let platformBottom = platform.position.y - platform.size.height / 2
-            let platformLeft = platform.position.x - platform.size.width / 2
-            let platformRight = platform.position.x + platform.size.width / 2
-            
-            if playerBottom <= platformTop && playerTop >= platformBottom &&
-               playerRight >= platformLeft && playerLeft <= platformRight &&
-               playerVelocity.y <= 0 {
+            if basketRect.intersects(eggRect) {
+                score += 10
+                eggsCaught += 1
+                userSettings?.totalCoins += 10
+                fallingEggs.remove(at: index)
                 
-                playerPosition.y = platformTop + 20
-                playerVelocity.y = 0
-                break
+                if eggsCaught >= targetEggs {
+                    gameState = .victory
+                    stopGame()
+                }
+                continue
             }
-        }
-    }
-    
-    private func checkCoinCollection() {
-        for (index, coin) in coins.enumerated().reversed() {
-            if !coin.isCollected {
-                let distance = sqrt(pow(playerPosition.x - coin.position.x, 2) + pow(playerPosition.y - coin.position.y, 2))
-                if distance < 30 {
-                    coins[index].isCollected = true
-                    score += coin.value
+            
+            fallingEggs[index].position.y += fallSpeed * 0.016
+            
+            if fallingEggs[index].position.y > screenHeight + eggSize {
+                lives -= 1
+                fallingEggs.remove(at: index)
+                
+                if lives <= 0 {
+                    gameState = .gameOver
+                    stopGame()
                 }
             }
         }
     }
     
-    private func generateNewElements() {
-        // Генерація нових платформ
-        if platforms.isEmpty || platforms.last!.position.y < screenHeight + 200 {
-            let x = CGFloat.random(in: 50...(screenWidth - 50))
-            let y = (platforms.last?.position.y ?? 0) + CGFloat.random(in: 150...250)
-            let platform = Platform(
-                position: CGPoint(x: x, y: y),
-                size: CGSize(width: CGFloat.random(in: 80...120), height: 20)
-            )
-            platforms.append(platform)
-        }
+    private func spawnEgg() {
+        let margin: CGFloat = basketWidth/2 + 20
+        let randomX = CGFloat.random(in: margin...(screenWidth - margin))
+        let ballType = userSettings?.selectedBall ?? "Default Ball"
         
-        // Генерація нових монет
-        if coins.count < 5 {
-            let x = CGFloat.random(in: 50...(screenWidth - 50))
-            let baseY = platforms.last?.position.y ?? (playerPosition.y + screenHeight / 2)
-            let y = baseY + CGFloat.random(in: 50...150)
-            let coin = Coin(position: CGPoint(x: x, y: y))
-            coins.append(coin)
-        }
+        let newEgg = FallingEgg(
+            position: CGPoint(x: randomX, y: -eggSize),
+            ballType: ballType
+        )
+        
+        fallingEggs.append(newEgg)
     }
     
-    private func checkGameConditions() {
-        // Перевірка програшу - гравець падає за нижню межу екрану
-        if playerPosition.y > screenHeight + 100 {
-            gameState = .gameOver
-        }
-        
-        // Перевірка перемоги
-        if score >= 1000 {
-            gameState = .victory
-        }
-    }
-    
-    private func generateInitialLevel() {
-        // Генерація початкових платформ
-        let startY = screenHeight - 200
-        for i in 0..<5 {
-            let x = CGFloat.random(in: 50...(screenWidth - 50))
-            let y = startY - CGFloat(i) * 150
-            let platform = Platform(
-                position: CGPoint(x: x, y: y),
-                size: CGSize(width: CGFloat.random(in: 80...120), height: 20)
-            )
-            platforms.append(platform)
-        }
-        
-        // Генерація початкових монет
-        for i in 0..<3 {
-            let x = CGFloat.random(in: 50...(screenWidth - 50))
-            let y = startY - CGFloat(i) * 150 - 50
-            let coin = Coin(position: CGPoint(x: x, y: y))
-            coins.append(coin)
-        }
-    }
 }

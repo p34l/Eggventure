@@ -21,28 +21,15 @@ struct GameView: View {
                 .aspectRatio(contentMode: .fill)
                 .ignoresSafeArea()
 
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.2, green: 0.6, blue: 1.0),
-                    Color(red: 0.1, green: 0.4, blue: 0.8),
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
-
             VStack(spacing: 0) {
                 HStack {
                     HStack {
-                        // TODO: Замінити на яйце з assets
-                        Image("назва_яйця_з_assets")
+                        Image("coin")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
-
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
-                        Text("\(gameViewModel.score)")
+                        
+                        Text("\(userSettings.totalCoins)")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.white)
                     }
@@ -55,55 +42,67 @@ struct GameView: View {
 
                     Spacer()
 
+                    HStack(spacing: 5) {
+                        ForEach(0..<gameViewModel.lives, id: \.self) { _ in
+                            Text("🧡")
+                                .font(.title2)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(.black.opacity(0.3))
+                    )
+
+                    Spacer()
+
                     Button(action: {
                         gameViewModel.togglePause()
                     }) {
-                        // TODO: Замінити на кнопки з assets
-                        Image(gameViewModel.isPaused ? "play" : "pause")
+                        Image("pause")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
+                            .frame(width: 60, height: 60)
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 10)
+                .padding(.top, 50)
+
+                Text("Eggs Caught: \(gameViewModel.eggsCaught)/\(gameViewModel.targetEggs)")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 15)
+                            .fill(.black.opacity(0.3))
+                    )
+                    .padding(.top, 10)
 
                 GeometryReader { geometry in
                     ZStack {
-                        // Платформи
-                        ForEach(gameViewModel.platforms) { platform in
-                            PlatformView(platform: platform)
+                        ForEach(gameViewModel.fallingEggs) { egg in
+                            Image(egg.ballType)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 40, height: 40)
+                                .position(egg.position)
                         }
 
-                        // Монети
-                        ForEach(gameViewModel.coins) { coin in
-                            CoinView(coin: coin)
-                        }
-
-                        // Гравець
-                        PlayerView(
-                            position: gameViewModel.playerPosition,
-                            ballType: userSettings.selectedBall
-                        )
+                        Image(systemName: "basket.fill")
+                            .resizable()
+                            .frame(width: 80, height: 40)
+                            .foregroundColor(.brown)
+                            .position(x: gameViewModel.basketPosition, y: geometry.size.height - 20)
                     }
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .clipped()
-                    .onTapGesture { location in
-                        if !gameViewModel.isPaused {
-                            if location.x < geometry.size.width / 2 {
-                                gameViewModel.movePlayerLeft()
-                            } else {
-                                gameViewModel.movePlayerRight()
-                            }
-                        }
-                    }
                 }
 
-                // Кнопки управління
                 if !gameViewModel.isPaused {
                     HStack {
                         Button(action: {
-                            gameViewModel.movePlayerLeft()
+                            gameViewModel.moveBasketLeft()
                         }) {
                             Image(systemName: "arrowtriangle.left.fill")
                                 .foregroundColor(.white)
@@ -114,26 +113,18 @@ struct GameView: View {
                                         .fill(.black.opacity(0.3))
                                 )
                         }
+                        .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
+                            if pressing {
+                                gameViewModel.startMovingLeft()
+                            } else {
+                                gameViewModel.stopMovingLeft()
+                            }
+                        }, perform: {})
 
                         Spacer()
 
                         Button(action: {
-                            gameViewModel.jump()
-                        }) {
-                            Image(systemName: "arrowtriangle.up.fill")
-                                .foregroundColor(.white)
-                                .font(.title)
-                                .frame(width: 60, height: 60)
-                                .background(
-                                    Circle()
-                                        .fill(.black.opacity(0.3))
-                                )
-                        }
-
-                        Spacer()
-
-                        Button(action: {
-                            gameViewModel.movePlayerRight()
+                            gameViewModel.moveBasketRight()
                         }) {
                             Image(systemName: "arrowtriangle.right.fill")
                                 .foregroundColor(.white)
@@ -144,6 +135,13 @@ struct GameView: View {
                                         .fill(.black.opacity(0.3))
                                 )
                         }
+                        .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
+                            if pressing {
+                                gameViewModel.startMovingRight()
+                            } else {
+                                gameViewModel.stopMovingRight()
+                            }
+                        }, perform: {})
                     }
                     .padding(.horizontal, 40)
                     .padding(.bottom, 30)
@@ -180,7 +178,11 @@ struct GameView: View {
         }
         .navigationBarHidden(true)
         .onAppear {
+            gameViewModel.setUserSettings(userSettings)
             gameViewModel.startGame()
+        }
+        .onDisappear {
+            gameViewModel.stopGame()
         }
         .onChange(of: gameViewModel.gameState) { state in
             switch state {
@@ -195,63 +197,6 @@ struct GameView: View {
     }
 }
 
-struct PlayerView: View {
-    let position: CGPoint
-    let ballType: String
-
-    var body: some View {
-        // TODO: Замінити на яйце з assets
-        // Image("назва_яйця_персонажа_з_assets")
-        //     .resizable()
-        //     .aspectRatio(contentMode: .fit)
-        //     .frame(width: 40, height: 40)
-        //     .position(position)
-
-        Image(ballType)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 40, height: 40)
-            .position(position)
-    }
-}
-
-struct PlatformView: View {
-    let platform: Platform
-
-    var body: some View {
-        // TODO: Замінити на платформу з assets
-        // Image("назва_платформи_з_assets")
-        //     .resizable()
-        //     .frame(width: platform.size.width, height: platform.size.height)
-        //     .position(platform.position)
-
-        Rectangle()
-            .fill(Color.brown)
-            .frame(width: platform.size.width, height: platform.size.height)
-            .position(platform.position)
-    }
-}
-
-struct CoinView: View {
-    let coin: Coin
-
-    var body: some View {
-        // TODO: Замінити на яйце з assets (замість монети)
-        // Image("назва_яйця_монети_з_assets")
-        //     .resizable()
-        //     .aspectRatio(contentMode: .fit)
-        //     .frame(width: 30, height: 30)
-        //     .position(coin.position)
-        //     .opacity(coin.isCollected ? 0 : 1)
-
-        Image("coin")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 30, height: 30)
-            .position(coin.position)
-            .opacity(coin.isCollected ? 0 : 1)
-    }
-}
 
 struct PauseOverlay: View {
     let onResume: () -> Void
@@ -259,41 +204,82 @@ struct PauseOverlay: View {
     let onHome: () -> Void
 
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.7)
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            ZStack {
+                Color.black.opacity(0.7)
+                    .ignoresSafeArea()
 
-            VStack(spacing: 20) {
-                Text("PAUSED")
-                    .font(.system(size: 36, weight: .bold))
-                    .foregroundColor(.white)
+                VStack(spacing: 40) {
+                    Spacer()
 
-                VStack(spacing: 15) {
-                    Button("RESUME") {
-                        onResume()
+                    // Напис PAUSED на 80% ширини екрану
+                    Text("PAUSED")
+                        .font(.system(size: min(geometry.size.width * 0.8 / 6, 80), weight: .bold))
+                        .foregroundColor(.white)
+                        .frame(width: geometry.size.width * 0.8)
+                        .multilineTextAlignment(.center)
+
+                    // Кнопки HOME та RESTART на одному рівні
+                    HStack(spacing: 30) {
+                        // Кнопка HOME
+                        Button(action: onHome) {
+                            Text("HOME")
+                                .font(.system(size: min(geometry.size.width * 0.4 / 4, 40), weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: geometry.size.width * 0.35, height: 60)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .fill(.white.opacity(0.2))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 15)
+                                                .stroke(.white.opacity(0.4), lineWidth: 2)
+                                        )
+                                )
+                        }
+                        .buttonStyle(PauseOverlayButtonStyle())
+
+                        // Кнопка RESTART
+                        Button(action: {
+                            onRestart()
+                            onResume() // Також закриває віконце паузи
+                        }) {
+                            Text("RESTART")
+                                .font(.system(size: min(geometry.size.width * 0.4 / 7, 40), weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: geometry.size.width * 0.35, height: 60)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .fill(.white.opacity(0.2))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 15)
+                                                .stroke(.white.opacity(0.4), lineWidth: 2)
+                                        )
+                                )
+                        }
+                        .buttonStyle(PauseOverlayButtonStyle())
                     }
-                    .buttonStyle(GameButtonStyle())
 
-                    Button("RESTART") {
-                        onRestart()
-                    }
-                    .buttonStyle(GameButtonStyle())
+                    Spacer()
 
-                    Button("HOME") {
-                        onHome()
+                    // Велика кнопка PLAY знизу трошки вище (ширша)
+                    Button(action: onResume) {
+                        ZStack {
+                            Image("func_button_background")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 250, height: 180)
+
+                            Image("play")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 120, height: 50)
+                                .offset(y: -10)
+                        }
                     }
-                    .buttonStyle(GameButtonStyle())
+                    .buttonStyle(PlayButtonStyle())
+                    .padding(.bottom, 80)
                 }
             }
-            .padding(40)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(.white.opacity(0.2))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.white.opacity(0.4), lineWidth: 2)
-                    )
-            )
         }
     }
 }
@@ -353,16 +339,12 @@ struct VictoryOverlay: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
-                Text("VICTORY!")
+                Text("VICTORY")
                     .font(.system(size: 36, weight: .bold))
-                    .foregroundColor(.yellow)
-
-                Text("Score: \(score)")
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(.green)
 
                 VStack(spacing: 15) {
-                    Button("PLAY AGAIN") {
+                    Button("RESTART") {
                         onRestart()
                     }
                     .buttonStyle(GameButtonStyle())
@@ -401,6 +383,36 @@ struct GameButtonStyle: ButtonStyle {
                             .stroke(.white.opacity(0.4), lineWidth: 2)
                     )
             )
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+    }
+}
+
+struct PauseButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .frame(width: 60, height: 60)
+            .background(
+                Circle()
+                    .fill(.white.opacity(0.2))
+                    .overlay(
+                        Circle()
+                            .stroke(.white.opacity(0.4), lineWidth: 2)
+                    )
+            )
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+    }
+}
+
+struct PlayButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+    }
+}
+
+struct PauseOverlayButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
     }
 }
