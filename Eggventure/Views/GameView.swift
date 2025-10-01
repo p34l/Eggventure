@@ -405,7 +405,3 @@ struct GameButtonStyle: ButtonStyle {
     }
 }
 
-#Preview {
-    GameView()
-        .environmentObject(UserSettings())
-}

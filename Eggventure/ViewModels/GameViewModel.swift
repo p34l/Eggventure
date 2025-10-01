@@ -105,14 +105,11 @@ class GameViewModel: ObservableObject {
         let deltaTime = currentTime.timeIntervalSince(lastUpdateTime)
         lastUpdateTime = currentTime
         
-        // Застосування гравітації
         playerVelocity.y -= gravity * deltaTime
         
-        // Оновлення позиції гравця
         playerPosition.x += playerVelocity.x * deltaTime
         playerPosition.y += playerVelocity.y * deltaTime
         
-        // Обмеження руху по горизонталі
         let playerRadius: CGFloat = 20
         if playerPosition.x < playerRadius {
             playerPosition.x = playerRadius
@@ -122,19 +119,14 @@ class GameViewModel: ObservableObject {
             playerVelocity.x = 0
         }
         
-        // Перевірка колізій з платформами
         checkPlatformCollisions()
         
-        // Перевірка збору монет
         checkCoinCollection()
         
-        // Генерація нових елементів
         generateNewElements()
         
-        // Перевірка умов гри
         checkGameConditions()
         
-        // Затухання горизонтальної швидкості
         playerVelocity.x *= 0.9
     }
     
@@ -150,7 +142,6 @@ class GameViewModel: ObservableObject {
             let platformLeft = platform.position.x - platform.size.width / 2
             let platformRight = platform.position.x + platform.size.width / 2
             
-            // Перевірка колізії зверху платформи
             if playerBottom <= platformTop && playerTop >= platformBottom &&
                playerRight >= platformLeft && playerLeft <= platformRight &&
                playerVelocity.y <= 0 {

@@ -42,6 +42,7 @@ struct TermsView: View {
                 Spacer()
 
                 VStack(spacing: 0) {
+                    // Назва на верхньому краю всередині прямокутника
                     Text("TERMS OF SERVICE")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -74,6 +75,3 @@ struct TermsView: View {
     }
 }
 
-#Preview {
-    TermsView()
-}

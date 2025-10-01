@@ -157,8 +157,3 @@ struct MoreButton: View {
     }
 }
 
-#Preview {
-    MoreView(navigationPath: .constant(NavigationPath()))
-        .environmentObject(UserSettings())
-        .environmentObject(GameData())
-}

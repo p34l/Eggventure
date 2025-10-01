@@ -29,9 +29,22 @@
 		AB059F032E76F17C00CE05EC /* EggventureUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EggventureUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		ABF3BFBD2E8D228C004A080A /* Exceptions for "Eggventure" folder in "Eggventure" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AB059EDF2E76F17A00CE05EC /* Eggventure */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AB059EE22E76F17A00CE05EC /* Eggventure */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				ABF3BFBD2E8D228C004A080A /* Exceptions for "Eggventure" folder in "Eggventure" target */,
+			);
 			path = Eggventure;
 			sourceTree = "<group>";
 		};
@@ -383,6 +396,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 527628X4YU;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Eggventure/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to take a profile picture.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app needs access to your photo library to set a profile picture.\n";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -411,6 +427,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 527628X4YU;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Eggventure/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to take a profile picture.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app needs access to your photo library to set a profile picture.\n";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

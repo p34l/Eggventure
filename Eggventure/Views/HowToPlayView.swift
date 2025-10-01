@@ -148,6 +148,3 @@ struct InstructionCard: View {
     }
 }
 
-#Preview {
-    HowToPlayView(navigationPath: .constant(NavigationPath()))
-}

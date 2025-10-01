@@ -38,11 +38,11 @@ struct LevelData: Identifiable {
 
 class GameData: ObservableObject {
     @Published var balls: [BallItem] = [
-        BallItem(id: "hero", name: "Default Ball", price: 0, isUnlocked: true),
-        BallItem(id: "ball2", name: "Golden Ball", price: 500, isUnlocked: false),
-        BallItem(id: "ball3", name: "Amethyst Ball", price: 300, isUnlocked: false),
-        BallItem(id: "ball4", name: "Ice Ball", price: 800, isUnlocked: false),
-        BallItem(id: "ball5", name: "Fire Ball", price: 1000, isUnlocked: false)
+        BallItem(id: "default", name: "Default Ball", price: 0, isUnlocked: true),
+        BallItem(id: "amethyst", name: "Amethyst Ball", price: 100, isUnlocked: false),
+        BallItem(id: "fire", name: "Fire Ball", price: 150, isUnlocked: false),
+        BallItem(id: "golden", name: "Golden Ball", price: 200, isUnlocked: false),
+        BallItem(id: "ice", name: "Ice Ball", price: 250, isUnlocked: false)
     ]
     
     @Published var levels: [LevelData] = []

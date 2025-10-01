@@ -16,16 +16,13 @@ struct MenuView: View {
     var body: some View {
         NavigationStack(path: $navigationPath) {
             ZStack {
-                // Фон з assets
                 Image("loading_background")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // Верхня частина з кнопками
                     HStack {
-                        // Кнопка info зліва
                         Button(action: {
                             navigationPath.append("howtoplay")
                         }) {
@@ -39,7 +36,6 @@ struct MenuView: View {
 
                         Spacer()
 
-                        // Кнопка menu справа
                         Button(action: {
                             navigationPath.append("more")
                         }) {
@@ -54,7 +50,6 @@ struct MenuView: View {
 
                     Spacer()
 
-                    // Персонаж hero по центру
                     Image("hero")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -65,18 +60,32 @@ struct MenuView: View {
 
                     Spacer()
 
-                    // Кнопка PLAY знизу по центру
                     Button(action: {
-                        navigationPath.append("levels")
+                        navigationPath.append("shop")
                     }) {
                         ZStack {
-                            // Фон кнопки
                             Image("func_button_background")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 200, height: 80)
 
-                            // Текст кнопки (картинка play)
+                            Text("SHOP")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(.white)
+                                .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
+                        }
+                    }
+                    .padding(.bottom, 20)
+
+                    Button(action: {
+                        navigationPath.append("levels")
+                    }) {
+                        ZStack {
+                            Image("func_button_background")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 200, height: 80)
+
                             Image("play")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
@@ -90,7 +99,7 @@ struct MenuView: View {
             .navigationDestination(for: String.self) { destination in
                 switch destination {
                 case "levels":
-                    LevelsView()
+                    LevelsView(navigationPath: $navigationPath)
                         .environmentObject(userSettings)
                         .environmentObject(gameData)
                 case "howtoplay":
@@ -100,10 +109,10 @@ struct MenuView: View {
                         .environmentObject(userSettings)
                         .environmentObject(gameData)
                 case "profile":
-                    ProfileView()
+                    ProfileView(navigationPath: $navigationPath)
                         .environmentObject(userSettings)
                 case "settings":
-                    SettingsView()
+                    SettingsView(navigationPath: $navigationPath)
                         .environmentObject(userSettings)
                 case "leaderboard":
                     LeaderboardView()
@@ -113,16 +122,14 @@ struct MenuView: View {
                     PolicyView()
                 case "terms":
                     TermsView()
+                case "shop":
+                    ShopView(navigationPath: $navigationPath)
+                        .environmentObject(userSettings)
+                        .environmentObject(gameData)
                 default:
                     EmptyView()
                 }
             }
         }
     }
-}
-
-#Preview {
-    MenuView()
-        .environmentObject(UserSettings())
-        .environmentObject(GameData())
 }

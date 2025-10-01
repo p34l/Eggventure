@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var userSettings: UserSettings
     @Environment(\.dismiss) private var dismiss
+    @Binding var navigationPath: NavigationPath
 
     var body: some View {
         ZStack {
@@ -43,6 +44,7 @@ struct SettingsView: View {
                 Spacer()
 
                 VStack(spacing: 0) {
+                    // Назва на верхньому краю всередині прямокутника
                     Text("SETTINGS")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -50,12 +52,30 @@ struct SettingsView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 20)
 
-                    // TODO: Додати контент налаштувань
-                    Text("Settings content will be added here...")
-                        .font(.system(size: 16))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 20)
+                    // Налаштування
+                    VStack(spacing: 20) {
+                        SettingRowView(
+                            title: "Music",
+                            isOn: $userSettings.musicEnabled
+                        )
+                        
+                        SettingRowView(
+                            title: "Sound",
+                            isOn: $userSettings.soundEnabled
+                        )
+                        
+                        SettingRowView(
+                            title: "Notifications",
+                            isOn: $userSettings.notificationsEnabled
+                        )
+                        
+                        SettingRowView(
+                            title: "Vibration",
+                            isOn: $userSettings.vibrationEnabled
+                        )
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(
@@ -69,13 +89,60 @@ struct SettingsView: View {
                 .padding(.horizontal, 40)
 
                 Spacer()
+                
+                // Кнопка Save
+                Button(action: {
+                    // Збереження вже відбувається автоматично через didSet
+                    // Повертаємося назад
+                    if !navigationPath.isEmpty {
+                        navigationPath.removeLast()
+                    }
+                }) {
+                    ZStack {
+                        Image("with_save")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 120, height: 60)
+                        
+                        Image("save")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40, height: 40)
+                    }
+                }
+                .padding(.bottom, 30)
             }
         }
         .navigationBarHidden(true)
     }
 }
 
-#Preview {
-    SettingsView()
-        .environmentObject(UserSettings())
+struct SettingRowView: View {
+    let title: String
+    @Binding var isOn: Bool
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.white)
+                .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
+            
+            Spacer()
+            
+            Toggle("", isOn: $isOn)
+                .toggleStyle(SwitchToggleStyle(tint: .pink))
+                .scaleEffect(0.8)
+        }
+        .padding(.horizontal, 15)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.pink.opacity(0.7))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                )
+        )
+    }
 }

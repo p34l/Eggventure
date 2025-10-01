@@ -20,6 +20,12 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var ownedBalls: [String] {
+        didSet {
+            UserDefaults.standard.set(ownedBalls, forKey: "ownedBalls")
+        }
+    }
+    
     @Published var totalCoins: Int {
         didSet {
             UserDefaults.standard.set(totalCoins, forKey: "totalCoins")
@@ -44,6 +50,24 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var vibrationEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(vibrationEnabled, forKey: "vibrationEnabled")
+        }
+    }
+    
+    @Published var userEmail: String {
+        didSet {
+            UserDefaults.standard.set(userEmail, forKey: "userEmail")
+        }
+    }
+    
+    @Published var userProfileImage: Data? {
+        didSet {
+            UserDefaults.standard.set(userProfileImage, forKey: "userProfileImage")
+        }
+    }
+    
     @Published var unlockedLevels: Set<Int> {
         didSet {
             let array = Array(unlockedLevels)
@@ -59,11 +83,15 @@ class UserSettings: ObservableObject {
     
     init() {
         self.playerName = UserDefaults.standard.string(forKey: "playerName") ?? "Player"
-        self.selectedBall = UserDefaults.standard.string(forKey: "selectedBall") ?? "hero"
+        self.selectedBall = UserDefaults.standard.string(forKey: "selectedBall") ?? "Default Ball"
+        self.ownedBalls = UserDefaults.standard.array(forKey: "ownedBalls") as? [String] ?? ["Default Ball"]
         self.totalCoins = UserDefaults.standard.integer(forKey: "totalCoins") == 0 ? 1000 : UserDefaults.standard.integer(forKey: "totalCoins")
         self.soundEnabled = UserDefaults.standard.object(forKey: "soundEnabled") == nil ? true : UserDefaults.standard.bool(forKey: "soundEnabled")
         self.musicEnabled = UserDefaults.standard.object(forKey: "musicEnabled") == nil ? true : UserDefaults.standard.bool(forKey: "musicEnabled")
         self.notificationsEnabled = UserDefaults.standard.object(forKey: "notificationsEnabled") == nil ? true : UserDefaults.standard.bool(forKey: "notificationsEnabled")
+        self.vibrationEnabled = UserDefaults.standard.object(forKey: "vibrationEnabled") == nil ? true : UserDefaults.standard.bool(forKey: "vibrationEnabled")
+        self.userEmail = UserDefaults.standard.string(forKey: "userEmail") ?? ""
+        self.userProfileImage = UserDefaults.standard.data(forKey: "userProfileImage")
         
         let levelsArray = UserDefaults.standard.array(forKey: "unlockedLevels") as? [Int] ?? [1]
         self.unlockedLevels = Set(levelsArray)
