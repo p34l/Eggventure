@@ -19,66 +19,28 @@ struct LevelsView: View {
     
     var body: some View {
         ZStack {
-            // Фон такий самий як в інших view
             Image("loading_background")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Верхня частина з кнопкою назад та індикатором монеток
                 HStack {
-                    // Кнопка назад зліва
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image("back")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60, height: 60)
-                    }
-                    .padding(.top, 20)
-                    .padding(.leading, 40)
-
+                    NavigationHeader(
+                        leftButton: NavigationButton(imageName: "back", action: { dismiss() })
+                    )
                     Spacer()
-
-                    // Індикатор монеток справа
-                    ZStack {
-                        // Asset with_coin з кількістю монеток
-                        ZStack {
-                            Image("with_coin")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 80, height: 40)
-
-                            Text("\(userSettings.totalCoins)")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
-                                .offset(x: -8) // Зсуваємо текст лівіше
-                        }
-
-                        // Asset coin (справа в кінці індикатора)
-                        Image("coin")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
-                            .offset(x: 30) // Зсуваємо монетку ще правіше
-                    }
-                    .padding(.top, 20)
-                    .padding(.trailing, 40)
+                    CoinIndicator(totalCoins: userSettings.totalCoins)
                 }
 
                 Spacer()
 
-                // Назва на верхньому краю
                 Text("CHANGE LEVEL")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                     .shadow(color: .black.opacity(0.3), radius: 2, x: 2, y: 2)
                     .padding(.bottom, 40)
                 
-                // Сітка рівнів 3x3
                 LazyVGrid(columns: columns, spacing: 15) {
                     ForEach(1...9, id: \.self) { level in
                         LevelButton(
@@ -116,15 +78,13 @@ struct LevelButton: View {
     var body: some View {
         Button(action: action) {
             ZStack {
-                // Asset photo як фон
                 Image("photo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 80, height: 80)
-                    .opacity(isUnlocked ? 1.0 : 0.3) // Сірий для заблокованих
-                    .grayscale(isUnlocked ? 0.0 : 1.0) // Сірий ефект для заблокованих
+                    .opacity(isUnlocked ? 1.0 : 0.3)
+                    .grayscale(isUnlocked ? 0.0 : 1.0)
                 
-                // Цифра по центру
                 Text("\(level)")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(isUnlocked ? .white : .gray)

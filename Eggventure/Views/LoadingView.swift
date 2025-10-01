@@ -35,16 +35,12 @@ struct LoadingView: View {
                         isAnimating = true
                     }
 
-                // Прогрес бар з градієнтом та числами
                 VStack(spacing: 8) {
-                    // Кастомний прогрес бар
                     ZStack(alignment: .leading) {
-                        // Фон прогрес бару
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 300, height: 40)
 
-                        // Градієнтний прогрес бар (від червоного до жовтого)
                         RoundedRectangle(cornerRadius: 10)
                             .fill(
                                 LinearGradient(
@@ -56,7 +52,6 @@ struct LoadingView: View {
                             .frame(width: 300 * progress, height: 40)
                             .animation(.linear(duration: 0.1), value: progress)
 
-                        // Числа на прогрес барі
                         HStack {
                             Spacer()
                             Text("\(Int(progress * 100))%")

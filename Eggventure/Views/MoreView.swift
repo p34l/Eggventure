@@ -14,16 +14,13 @@ struct MoreView: View {
 
     var body: some View {
         ZStack {
-            // Фон такий самий як в HowToPlayView
             Image("loading_background")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // Верхня частина з кнопкою назад та індикатором монеток
                 HStack {
-                    // Кнопка назад зліва
                     Button(action: {
                         if !navigationPath.isEmpty {
                             navigationPath.removeLast()
@@ -39,9 +36,7 @@ struct MoreView: View {
 
                     Spacer()
 
-                    // Індикатор монеток справа
                     ZStack {
-                        // Asset with_coin з кількістю монеток
                         ZStack {
                             Image("with_coin")
                                 .resizable()
@@ -52,15 +47,14 @@ struct MoreView: View {
                                 .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(.white)
                                 .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
-                                .offset(x: -8) // Зсуваємо текст лівіше
+                                .offset(x: -8)
                         }
 
-                        // Asset coin (справа в кінці індикатора)
                         Image("coin")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 30, height: 30)
-                            .offset(x: 30) // Зсуваємо монетку ще правіше
+                            .offset(x: 30)
                     }
                     .padding(.top, 20)
                     .padding(.trailing, 40)
@@ -68,11 +62,8 @@ struct MoreView: View {
 
                 Spacer()
 
-                // Фіолетовий прямокутник з кнопками
                 VStack(spacing: 0) {
-                    // 5 кнопок з assets
                     VStack(spacing: 20) {
-                        // Кнопка Profile
                         MoreButton(
                             imageName: "profile",
                             action: {
@@ -80,7 +71,6 @@ struct MoreView: View {
                             }
                         )
 
-                        // Кнопка Settings
                         MoreButton(
                             imageName: "settings",
                             action: {
@@ -88,7 +78,6 @@ struct MoreView: View {
                             }
                         )
 
-                        // Кнопка Leaderboard
                         MoreButton(
                             imageName: "leaderboard",
                             action: {
@@ -96,7 +85,6 @@ struct MoreView: View {
                             }
                         )
 
-                        // Кнопка Policy
                         MoreButton(
                             imageName: "policy",
                             action: {
@@ -104,7 +92,6 @@ struct MoreView: View {
                             }
                         )
 
-                        // Кнопка Terms
                         MoreButton(
                             imageName: "term",
                             action: {

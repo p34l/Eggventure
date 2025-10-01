@@ -35,41 +35,11 @@ struct ShopView: View {
 
             VStack(spacing: 0) {
                 HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image("back")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60, height: 60)
-                    }
-                    .padding(.top, 45)
-                    .padding(.leading, 60)
-
+                    NavigationHeader(
+                        leftButton: NavigationButton(imageName: "back", action: { dismiss() })
+                    )
                     Spacer()
-
-                    ZStack {
-                        ZStack {
-                            Image("with_coin")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 80, height: 40)
-
-                            Text("\(userSettings.totalCoins)")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.white)
-                                .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
-                                .offset(x: -8)
-                        }
-
-                        Image("coin")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 30, height: 30)
-                            .offset(x: 30)
-                    }
-                    .padding(.top, 45)
-                    .padding(.trailing, 80)
+                    CoinIndicator(totalCoins: userSettings.totalCoins)
                 }
 
                 Spacer()

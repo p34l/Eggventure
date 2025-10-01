@@ -12,34 +12,19 @@ struct HowToPlayView: View {
 
     var body: some View {
         ZStack {
-            // Фон такий самий як в меню
             Image("loading_background")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                HStack {
-                    Button(action: {
+                NavigationHeader(
+                    leftButton: NavigationButton(imageName: "back", action: {
                         if !navigationPath.isEmpty {
                             navigationPath.removeLast()
                         }
-                    }) {
-                        Image("back")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60, height: 60)
-                    }
-                    .padding(.top, 20)
-                    .padding(.leading, 40)
-
-                    Spacer()
-
-                    Color.clear
-                        .frame(width: 60, height: 60)
-                        .padding(.top, 20)
-                        .padding(.trailing, 40)
-                }
+                    })
+                )
 
                 Spacer()
 

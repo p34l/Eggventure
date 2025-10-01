@@ -20,31 +20,13 @@ struct LeaderboardView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image("back")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60, height: 60)
-                    }
-                    .padding(.top, 20)
-                    .padding(.leading, 40)
-
-                    Spacer()
-
-                    // Порожнє місце під другу кнопку (як settings у меню)
-                    Color.clear
-                        .frame(width: 60, height: 60)
-                        .padding(.top, 20)
-                        .padding(.trailing, 40)
-                }
+                NavigationHeader(
+                    leftButton: NavigationButton(imageName: "back", action: { dismiss() })
+                )
 
                 Spacer()
 
                 VStack(spacing: 0) {
-                    // Назва на верхньому краю всередині прямокутника
                     Text("LEADERBOARD")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -52,7 +34,6 @@ struct LeaderboardView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 20)
 
-                    // Список гравців
                     ScrollView {
                         LazyVStack(spacing: 15) {
                             ForEach(0..<10) { index in
@@ -92,7 +73,6 @@ struct PlayerRowView: View {
     
     var body: some View {
         HStack(spacing: 15) {
-            // Аватарка зліва
             Image("hero")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -103,7 +83,6 @@ struct PlayerRowView: View {
                         .stroke(Color.white.opacity(0.3), lineWidth: 2)
                 )
             
-            // Рожевий прямокутник з інформацією про гравця
             HStack {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(playerName)

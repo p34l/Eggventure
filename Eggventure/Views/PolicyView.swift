@@ -18,25 +18,9 @@ struct PolicyView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image("back")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60, height: 60)
-                    }
-                    .padding(.top, 20)
-                    .padding(.leading, 40)
-
-                    Spacer()
-
-                    Color.clear
-                        .frame(width: 60, height: 60)
-                        .padding(.top, 20)
-                        .padding(.trailing, 40)
-                }
+                NavigationHeader(
+                    leftButton: NavigationButton(imageName: "back", action: { dismiss() })
+                )
 
                 Spacer()
 

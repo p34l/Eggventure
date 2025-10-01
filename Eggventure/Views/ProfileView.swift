@@ -29,31 +29,13 @@ struct ProfileView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image("back")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60, height: 60)
-                    }
-                    .padding(.top, 20)
-                    .padding(.leading, 40)
-
-                    Spacer()
-
-                    // Порожнє місце під другу кнопку (як settings у меню)
-                    Color.clear
-                        .frame(width: 60, height: 60)
-                        .padding(.top, 20)
-                        .padding(.trailing, 40)
-                }
+                NavigationHeader(
+                    leftButton: NavigationButton(imageName: "back", action: { dismiss() })
+                )
 
                 Spacer()
 
                 VStack(spacing: 0) {
-                    // Назва на верхньому краю всередині прямокутника
                     Text("PROFILE")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -61,9 +43,7 @@ struct ProfileView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 20)
 
-                    // Контент профілю
                     VStack(spacing: 20) {
-                        // Фото профілю
                         VStack(spacing: 10) {
                             if let imageData = userSettings.userProfileImage,
                                let uiImage = UIImage(data: imageData) {
@@ -103,7 +83,6 @@ struct ProfileView: View {
                             }
                         }
 
-                        // Поля Username та Email
                         VStack(spacing: 15) {
                             ProfileFieldView(
                                 title: "Username",
@@ -140,10 +119,7 @@ struct ProfileView: View {
 
                 Spacer()
 
-                // Кнопка Save
                 Button(action: {
-                    // Збереження вже відбувається автоматично через didSet
-                    // Повертаємося назад
                     if !navigationPath.isEmpty {
                         navigationPath.removeLast()
                     }

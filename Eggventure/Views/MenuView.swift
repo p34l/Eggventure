@@ -22,31 +22,14 @@ struct MenuView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    HStack {
-                        Button(action: {
+                    NavigationHeader(
+                        leftButton: NavigationButton(imageName: "info", action: {
                             navigationPath.append("howtoplay")
-                        }) {
-                            Image("info")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 60, height: 60)
-                        }
-                        .padding(.top, 20)
-                        .padding(.leading, 40)
-
-                        Spacer()
-
-                        Button(action: {
+                        }),
+                        rightButton: NavigationButton(imageName: "more", action: {
                             navigationPath.append("more")
-                        }) {
-                            Image("more")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 60, height: 60)
-                        }
-                        .padding(.top, 20)
-                        .padding(.trailing, 40)
-                    }
+                        })
+                    )
 
                     Spacer()
 

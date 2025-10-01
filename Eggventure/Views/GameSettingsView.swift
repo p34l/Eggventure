@@ -71,48 +71,12 @@ struct GameSettingsView: View {
     
     private var topBar: some View {
         HStack {
-            backButton
+            NavigationHeader(
+                leftButton: NavigationButton(imageName: "back", action: { dismiss() })
+            )
             Spacer()
-            coinIndicator
+            CoinIndicator(totalCoins: userSettings.totalCoins)
         }
-    }
-    
-    private var backButton: some View {
-        Button(action: {
-            dismiss()
-        }) {
-            Image("back")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 60, height: 60)
-        }
-        .padding(.top, 20)
-        .padding(.leading, 40)
-    }
-    
-    private var coinIndicator: some View {
-        ZStack {
-            ZStack {
-                Image("with_coin")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 80, height: 40)
-
-                Text("\(userSettings.totalCoins)")
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.5), radius: 1, x: 1, y: 1)
-                    .offset(x: -8)
-            }
-
-            Image("coin")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 30, height: 30)
-                .offset(x: 30)
-        }
-        .padding(.top, 20)
-        .padding(.trailing, 40)
     }
     
     private var settingsContent: some View {
@@ -348,82 +312,6 @@ struct SettingsTextFieldStyle: TextFieldStyle {
     }
 }
 
-struct SettingsButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 14, weight: .medium))
-            .foregroundColor(.white)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.purple.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                    )
-            )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-    }
-}
-
-struct SettingsModeButtonStyle: ButtonStyle {
-    let isSelected: Bool
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 10, weight: .medium))
-            .foregroundColor(.white)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(isSelected ? Color.pink.opacity(0.8) : Color.purple.opacity(0.7))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                    )
-            )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-    }
-}
-
-struct BetActionButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 10, weight: .bold))
-            .foregroundColor(.white)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.pink.opacity(0.8))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                    )
-            )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-    }
-}
-
-struct PlusButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(size: 14, weight: .bold))
-            .foregroundColor(.white)
-            .frame(width: 25, height: 35)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.green.opacity(0.8))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                    )
-            )
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-    }
-}
 
 struct BetAmountInputSheet: View {
     @Binding var betAmount: String

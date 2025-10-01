@@ -20,31 +20,13 @@ struct SettingsView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                HStack {
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image("back")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 60, height: 60)
-                    }
-                    .padding(.top, 20)
-                    .padding(.leading, 40)
-
-                    Spacer()
-
-                    // Порожнє місце під другу кнопку (як settings у меню)
-                    Color.clear
-                        .frame(width: 60, height: 60)
-                        .padding(.top, 20)
-                        .padding(.trailing, 40)
-                }
+                NavigationHeader(
+                    leftButton: NavigationButton(imageName: "back", action: { dismiss() })
+                )
 
                 Spacer()
 
                 VStack(spacing: 0) {
-                    // Назва на верхньому краю всередині прямокутника
                     Text("SETTINGS")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -52,7 +34,6 @@ struct SettingsView: View {
                         .padding(.top, 20)
                         .padding(.bottom, 20)
 
-                    // Налаштування
                     VStack(spacing: 20) {
                         SettingRowView(
                             title: "Music",
@@ -90,10 +71,7 @@ struct SettingsView: View {
 
                 Spacer()
                 
-                // Кнопка Save
                 Button(action: {
-                    // Збереження вже відбувається автоматично через didSet
-                    // Повертаємося назад
                     if !navigationPath.isEmpty {
                         navigationPath.removeLast()
                     }
